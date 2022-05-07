@@ -5,6 +5,8 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     <h2>Sign in</h2>
 
+    <asp:Label ID="lbError" runat="server" Text="" ForeColor="Red" Font-Bold="True"></asp:Label>
+
     <div class="form-group">
         <label>Username</label>
         <asp:TextBox ID="txtUsername" runat="server" CssClass="form-control"></asp:TextBox>

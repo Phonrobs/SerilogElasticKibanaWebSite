@@ -7,6 +7,8 @@ Partial Class Signin
             Session("Authenticated") = True
             Session("Username") = txtUsername.Text
             Response.Redirect("~/Default.aspx")
+        Else
+            lbError.Text = "Invalid username or password"
         End If
     End Sub
 End Class

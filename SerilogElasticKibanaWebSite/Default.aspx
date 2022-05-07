@@ -5,7 +5,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     <div class="row">
         <div class="col-12">
-            <h1>Hello World</h1>
+            <h1>Hello World :)</h1>
         </div>
         <div class="col-12">
             <%If Session("Authenticated") = True Then%>

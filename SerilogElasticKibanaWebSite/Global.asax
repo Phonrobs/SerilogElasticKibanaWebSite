@@ -1,6 +1,7 @@
 ﻿<%@ Application Language="VB" %>
+<%@ Import Namespace="Serilog" %>
 
-<script runat="server">
+<script RunAt="server">
 
     Sub Application_Start(ByVal sender As Object, ByVal e As EventArgs)
         ' Code that runs on application startup
