@@ -2,11 +2,13 @@
 <%@ Import Namespace="Serilog" %>
 <%@ Import Namespace="Serilog.Events" %>
 <%@ Import Namespace="SerilogWeb.Classic" %>
+<%@ Import Namespace="Serilog.Sinks.Elasticsearch" %>
+<%@ Import Namespace="System.Web.Configuration" %>
 
 <script RunAt="server">
     Const outputTemplate = "[{Timestamp:yyyy-MM-dd HH:mm:ss} {ClientIp} {Level:u3}] {Message:lj}{NewLine}{Exception:lj}{NewLine}{FormData:lj}"
 
-    Function SerilogWebClassicConfig(cfg As SerilogWebClassicConfigurationBuilder)
+    Function SerilogWebClassicConfig(cfg As SerilogWebClassicConfigurationBuilder) As SerilogWebClassicConfigurationBuilder
         Return cfg.EnableFormDataLogging(AddressOf FormDataLoggingConfig)
     End Function
 
@@ -14,11 +16,19 @@
         form.AtLevel(LogEventLevel.Information)
     End Sub
 
+    Function ConfigureElasticSink() As ElasticsearchSinkOptions
+        Dim options = New ElasticsearchSinkOptions(New Uri(WebConfigurationManager.AppSettings("ElasticUrl")))
+        options.AutoRegisterTemplate = True
+        options.IndexFormat = String.Format(WebConfigurationManager.AppSettings("ElasticIndexFormat"), DateTime.UtcNow)
+
+        Return options
+    End Function
+
     Sub Application_Start(ByVal sender As Object, ByVal e As EventArgs)
         ' Code that runs on application startup               
         SerilogWebClassic.Configure(AddressOf SerilogWebClassicConfig)
 
-        Log.Logger = New Serilog.LoggerConfiguration().MinimumLevel.Information().WriteTo.Debug(outputTemplate:=outputTemplate).Enrich.WithClientIp().CreateLogger()
+        Log.Logger = New Serilog.LoggerConfiguration().MinimumLevel.Information().WriteTo.Debug(outputTemplate:=outputTemplate).WriteTo.Elasticsearch(ConfigureElasticSink()).Enrich.WithClientIp().CreateLogger()
     End Sub
 
     Sub Application_End(ByVal sender As Object, ByVal e As EventArgs)
